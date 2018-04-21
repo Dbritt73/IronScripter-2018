@@ -1,0 +1,40 @@
+﻿body { 
+    color:#333333; 
+    font-family:Calibri,Tahoma; 
+    font-size: 10pt;
+    /*background-color:peachpuff; */
+} 
+TABLE {
+	border-width: 1px;
+	border-style: solid;
+	border-color: black;
+	border-collapse: collapse;
+}
+h1 { 
+    text-align:center;
+  /*  background-image:url("C:\Users\brittod\Documents\WindowsPowershell\Modules\WWUComputerOwnership\westernlogo_med.png");
+    position: absolute;
+	left: 0;
+	top: 50px;*/
+
+}
+/*.logo {
+	position: absolute;
+	left: 0;
+	top: 50px;
+
+} */
+h2 { 
+    border-top:1px solid #666666; 
+} 
+th { 
+    font-weight:bold; 
+    color:#000000; 
+    background-color:#eeeeee; 
+}
+TD {
+	border-width: 1px;
+	padding: 0px;
+	border-style: solid;
+	border-color: black;
+}
