@@ -101,12 +101,12 @@ Function Get-MonitorInfo {
 
             foreach ($monitor in $Monitors) {
 
-                $props = @{
+                $props = [ordered]@{
                     'ComputerName' = $computer;
                     'ComputerType' = $System.model;
                     'ComputerSerial' = $Bios.SerialNumber;
-                    'MonitorSerial' = ($Monitor.SerialNumberID | ForEach-Object {[Char]$_}) -Join "";
                     'MonitorType' = ($Monitor.UserFriendlyName | ForEach-Object {[Char]$_}) -Join ""
+                    'MonitorSerial' = ($Monitor.SerialNumberID | ForEach-Object {[Char]$_}) -Join "";
                     'ConnectionType' = Get-DisplayConnection -InstanceName $Monitor.InstanceName
                 }
 
