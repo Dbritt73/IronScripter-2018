@@ -84,7 +84,7 @@ Function Format-StringWrap {
 
             $str = ''
             $counter = 0
-            
+
             $line -split '\s' | Foreach-object {
 
                 $counter += $_.Length + 1
@@ -171,22 +171,30 @@ Function Get-Feed {
         $FeedPosts | Format-Table | Out-string | Write-Host
         $Selected = Read-Host -Prompt "What post would you like to read? Add 'C' to view in console"
 
-        if (($Selected -like "*C") -or ($Selected -like "*c")) {
+        if ($Selected -like "*C") {
 
+            $Selected = $Selected.TrimEnd('C')
+            $SelectedPost = $FeedPosts | Where-Object {$_.index -eq $Selected} 
+            $LinkPost = $SelectedPost | Select-Object -ExpandProperty 'link'
+        
+            $SelectedPost
+            Get-WebArticle -LinkPost $LinkPost
+        
+        } elseif ($Selected -like "*c") {
+        
             $Selected = $Selected.TrimEnd('c')
             $SelectedPost = $FeedPosts | Where-Object {$_.index -eq $Selected} 
             $LinkPost = $SelectedPost | Select-Object -ExpandProperty 'link'
-
+        
             $SelectedPost
             Get-WebArticle -LinkPost $LinkPost
-
+        
         } else {
-
+        
             Start-Process ($FeedPosts | Where-Object {$_.index -eq $Selected} | Select-Object -ExpandProperty 'link')
-
+        
         }
         
-
     }
 
     End {}
