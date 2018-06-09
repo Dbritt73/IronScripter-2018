@@ -1,3 +1,50 @@
+Function Get-DisplayConnection {
+    [CmdletBinding()]
+    Param (
+        [String[]]$InstanceName
+    )
+
+    Begin {}
+
+    Process {
+
+        $CIM = @{
+
+            'NameSpace' = 'Root/WMI';
+            'ClassName' = 'WmiMonitorConnectionParams'
+            'ErrorAction' = 'Stop'
+        }
+
+        $connectionType = get-ciminstance @CIM | Where-object {$_.InstanceName -eq $InstanceName} | Select-Object -ExpandProperty VideoOutputTechnology
+        
+        Switch ($ConnectionType) {
+
+            -2 {'Uninitialized'}
+            -1 {'Other'}
+            0 {'VGA'}
+            1 {'S-Video'}
+            2 {'Composite'}
+            3 {'Component'}
+            4 {'DVI'}
+            5 {'HDMI'}
+            6 {'LVDS'}
+            8 {'D-Jpn'}
+            9 {'SDI'}
+            10 {'External-DP'}
+            11 {'Embedded-DP'}
+            12 {'External-UDI'}
+            13 {'Embedded-IDU'}
+            14 {'SDTV'}
+            15 {'MiraCast'}
+
+        }
+
+    }
+
+    End {}
+
+}
+
 Function Get-MonitorInfo {
     <#
     .SYNOPSIS
@@ -60,6 +107,7 @@ Function Get-MonitorInfo {
                     'ComputerSerial' = $Bios.SerialNumber;
                     'MonitorSerial' = ($Monitor.SerialNumberID | ForEach-Object {[Char]$_}) -Join "";
                     'MonitorType' = ($Monitor.UserFriendlyName | ForEach-Object {[Char]$_}) -Join ""
+                    'ConnectionType' = Get-DisplayConnection -InstanceName $Monitor.InstanceName
                 }
 
                 $obj = New-Object -TypeName psobject -Property $props
