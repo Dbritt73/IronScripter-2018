@@ -52,7 +52,7 @@ Function Get-MonitorInfo {
 
     .DESCRIPTION
     Get-MonitorInfo utilizes the Common Information Model (CIM) instances of the computer to pull the user friendly
-    monitor name, monitor serial number, the computer name, computer model, and computer serial number. 
+    monitor name, monitor serial number, the computer name, computer model, connection type, and computer serial number. 
 
     .PARAMETER ComputerName
     Name of the computer on your network that you would like to query. Defaults to the local computer. 
