@@ -2,41 +2,56 @@ Function Get-RSSFeedList {
     [CmdletBinding()]
     Param (
         [Parameter( ValueFromPipeline = $true,
-        ValueFromPipelineByPropertyName =$true)]
+                    ValueFromPipelineByPropertyName =$true)]
         [String[]]$URL
     )
 
     Begin {
+
         $index = 1
+
     }
 
     Process {
+
         Foreach ($link in $url) {
+
             Try {
+
                 $feed = Invoke-RestMethod -Uri $link
+
                 foreach ($post in $feed) {
+
                     $postprops = [ordered]@{
+
                         'Index' =$index;
                         'Title' = $post.title;
                         'Date' = [DateTime]$post.pubdate;
                         'Author' = $post.creator.'#cdata-section';
-                        'Link' = $post.Link;
+                        'Link' = $post.Link
+
                     }
+
                     $index++
 
                     $ListObject = New-Object -TypeName psobject -Property $postprops
                     $ListObject.PSObject.TypeNames.Insert(0,'FeedList.Object')
                     Write-Output $ListObject
+
                 }
+
             } Catch {}
 
         }
+
     }
 
     End{}
+
 }
 
-function Format-StringWrap {
+
+Function Format-StringWrap {
     <#
     .SYNOPSIS
     wraps a string or an array of strings at the console width without breaking within a word
@@ -50,6 +65,7 @@ function Format-StringWrap {
     .Notes
     word-wrap borrwoed from: https://stackoverflow.com/questions/1059663/is-there-a-way-to-wordwrap-results-of-a-powershell-cmdlet
     #>
+
     [CmdletBinding()]
     Param(
         [parameter( Mandatory=1,
@@ -57,7 +73,10 @@ function Format-StringWrap {
                     ValueFromPipelineByPropertyName=1)]
         [Object[]]$chunk
     )
-    PROCESS {
+
+    Begin {}
+
+    Process {
 
         $Lines = @()
 
@@ -65,26 +84,34 @@ function Format-StringWrap {
 
             $str = ''
             $counter = 0
+            
             $line -split '\s' | Foreach-object {
 
                 $counter += $_.Length + 1
                 if ($counter -gt $Host.UI.RawUI.BufferSize.Width) {
+
                     $Lines += ,$str.trim()
                     $str =  ''
                     $counter = $_.Length + 1
+
                 }
 
                 $str = "$str$_ "
+
             }
 
             $Lines += ,$str.trim()
+
         }
 
         $Lines.replace('.  ',".`n")
 
     }
+
+    End {}
+
 }
-########################################################################################################################
+
 
 Function Get-WebArticle {
     [CmdletBinding()]
@@ -108,7 +135,6 @@ Function Get-WebArticle {
 
 }
 
-########################################################################################################################
 
 Function Get-Feed {
     <#
@@ -128,7 +154,6 @@ Function Get-Feed {
     General notes
     #>
 
-
     [CmdletBinding()]
     Param (
         [Parameter( ValueFromPipeline = $true,
@@ -146,7 +171,7 @@ Function Get-Feed {
         $FeedPosts | Format-Table | Out-string | Write-Host
         $Selected = Read-Host -Prompt "What post would you like to read? Add 'C' to view in console"
 
-        if (($Selected -like "*C") -or ($Selected-like "*c")) {
+        if (($Selected -like "*C") -or ($Selected -like "*c")) {
 
             $Selected = $Selected.TrimEnd('c')
             $SelectedPost = $FeedPosts | Where-Object {$_.index -eq $Selected} 
