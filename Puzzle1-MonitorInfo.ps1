@@ -33,7 +33,7 @@ Function Get-DisplayConnection {
             10 {'External-DP'}
             11 {'Embedded-DP'}
             12 {'External-UDI'}
-            13 {'Embedded-IDU'}
+            13 {'Embedded-UDI'}
             14 {'SDTV'}
             15 {'MiraCast'}
 
