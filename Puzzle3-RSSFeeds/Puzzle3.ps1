@@ -71,7 +71,7 @@ Function Format-StringWrap {
         [parameter( Mandatory=1,
                     ValueFromPipeline=1,
                     ValueFromPipelineByPropertyName=1)]
-        [Object[]]$chunk
+        [Object[]]$text
     )
 
     Begin {}
@@ -80,7 +80,7 @@ Function Format-StringWrap {
 
         $Lines = @()
 
-        foreach ($line in $chunk) {
+        foreach ($line in $text) {
 
             $str = ''
             $counter = 0
@@ -88,6 +88,7 @@ Function Format-StringWrap {
             $line -split '\s' | Foreach-object {
 
                 $counter += $_.Length + 1
+
                 if ($counter -gt $Host.UI.RawUI.BufferSize.Width) {
 
                     $Lines += ,$str.trim()
