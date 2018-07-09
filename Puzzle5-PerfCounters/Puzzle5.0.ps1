@@ -90,7 +90,7 @@ Function Invoke-Output {
             Try {
                 if ($PSBoundParameters.ContainsKey('html')) {
 
-                    $Style = "<style>$(Get-content .\ComputerOwnership.css)</style>"
+                    $Style = "<style>$(Get-content .\style.css)</style>"
                     $HTMLReport = $ComputerName | Get-PerfCounters | ConvertTo-Html -As 'Table' -Fragment -PreContent "<h2>PC Perf Counters</h2>" | Out-String
 
                     $HTMLParams = @{
