@@ -30,8 +30,12 @@ Function Get-DisplayConnection {
 
     [CmdletBinding()]
     Param (
+        [Parameter( Mandatory=$true,
+                    HelpMessage='Add help message for user')]
         [String[]]$InstanceName,
 
+        [Parameter( Mandatory=$true,
+                    HelpMessage='Add help message for user')]
         [string]$ComputerName
         
     )
@@ -77,10 +81,30 @@ Function Get-DisplayConnection {
         
                 }
 
-            } Catch {}
+            } Catch {
+
+                # get error record
+                [Management.Automation.ErrorRecord]$e = $_
+
+                # retrieve information about runtime error
+                $info = [PSCustomObject]@{
+                
+                  Date = (Get-Date)
+                  Exception = $e.Exception.Message
+                  Reason    = $e.CategoryInfo.Reason
+                  Target    = $e.CategoryInfo.TargetName
+                  Script    = $e.InvocationInfo.ScriptName
+                  Line      = $e.InvocationInfo.ScriptLineNumber
+                  Column    = $e.InvocationInfo.OffsetInLine
+
+                }
+                
+                # output information. Post-process collected info, and log info (optional)
+                Write-Output -InputObject $info
+
+            }
 
         }
-
 
     }
 
@@ -110,7 +134,7 @@ Function Get-MonitorInfo {
     Param (
         [Parameter( ValueFromPipelineByPropertyName=$True,
                     ValueFromPipeline=$True)]
-        [String[]]$ComputerName = 'localhost'
+        [string[]]$ComputerName = 'localhost'
     )
 
     foreach ($computer in $ComputerName) {
@@ -186,6 +210,7 @@ Function Get-MonitorInfo {
             # retrieve information about runtime error
             $info = [PSCustomObject]@{
             
+              Date = (Get-Date)
               Exception = $e.Exception.Message
               Reason    = $e.CategoryInfo.Reason
               Target    = $e.CategoryInfo.TargetName
@@ -196,7 +221,8 @@ Function Get-MonitorInfo {
             }
             
             # output information. Post-process collected info, and log info (optional)
-            $info
+            Write-output -inputobject $info
+            
         }
 
     }
