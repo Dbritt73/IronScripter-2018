@@ -1,41 +1,108 @@
 Function Get-DisplayConnection {
+  <#
+    .SYNOPSIS
+    Describe purpose of "Get-DisplayConnection" in 1-2 sentences.
+
+    .DESCRIPTION
+    Add a more complete description of what the function does.
+
+    .PARAMETER InstanceName
+    Describe parameter -InstanceName.
+
+    .EXAMPLE
+    Get-DisplayConnection -InstanceName Value
+    Describe what this call does
+
+    .NOTES
+    Place additional notes here.
+
+    .LINK
+    URLs to related sites
+    The first link is opened by Get-Help -Online Get-DisplayConnection
+
+    .INPUTS
+    List of input types that are accepted by this function.
+
+    .OUTPUTS
+    List of output types produced by this function.
+  #>
+
+
     [CmdletBinding()]
     Param (
-        [String[]]$InstanceName
+        [Parameter( Mandatory=$true,
+                    HelpMessage='Add help message for user')]
+        [String[]]$InstanceName,
+
+        [Parameter( Mandatory=$true,
+                    HelpMessage='Add help message for user')]
+        [string]$ComputerName
+        
     )
 
     Begin {}
 
     Process {
 
-        $CIM = @{
+        foreach ($computer in $ComputerName) {
 
-            'NameSpace' = 'Root/WMI';
-            'ClassName' = 'WmiMonitorConnectionParams'
-            'ErrorAction' = 'Stop'
-        }
+            Try {
 
-        $connectionType = get-ciminstance @CIM | Where-object {$_.InstanceName -eq $InstanceName} | Select-Object -ExpandProperty VideoOutputTechnology
+                $CIM = @{
+
+                    'NameSpace' = 'Root/WMI'
+                    'ComputerName' = $Computer
+                    'ClassName' = 'WmiMonitorConnectionParams'
+                    'ErrorAction' = 'Stop'
+
+                }
         
-        Switch ($ConnectionType) {
+                $connectionType = get-ciminstance @CIM | Where-object {$_.InstanceName -eq $InstanceName} | Select-Object -ExpandProperty VideoOutputTechnology
+                
+                Switch ($ConnectionType) {
+        
+                    -2 {'Uninitialized'}
+                    -1 {'Other'}
+                    0 {'VGA'}
+                    1 {'S-Video'}
+                    2 {'Composite'}
+                    3 {'Component'}
+                    4 {'DVI'}
+                    5 {'HDMI'}
+                    6 {'LVDS'}
+                    8 {'D-Jpn'}
+                    9 {'SDI'}
+                    10 {'External-DP'}
+                    11 {'Embedded-DP'}
+                    12 {'External-UDI'}
+                    13 {'Embedded-UDI'}
+                    14 {'SDTV'}
+                    15 {'MiraCast'}
+        
+                }
 
-            -2 {'Uninitialized'}
-            -1 {'Other'}
-            0 {'VGA'}
-            1 {'S-Video'}
-            2 {'Composite'}
-            3 {'Component'}
-            4 {'DVI'}
-            5 {'HDMI'}
-            6 {'LVDS'}
-            8 {'D-Jpn'}
-            9 {'SDI'}
-            10 {'External-DP'}
-            11 {'Embedded-DP'}
-            12 {'External-UDI'}
-            13 {'Embedded-UDI'}
-            14 {'SDTV'}
-            15 {'MiraCast'}
+            } Catch {
+
+                # get error record
+                [Management.Automation.ErrorRecord]$e = $_
+
+                # retrieve information about runtime error
+                $info = [PSCustomObject]@{
+                
+                  Date = (Get-Date)
+                  Exception = $e.Exception.Message
+                  Reason    = $e.CategoryInfo.Reason
+                  Target    = $e.CategoryInfo.TargetName
+                  Script    = $e.InvocationInfo.ScriptName
+                  Line      = $e.InvocationInfo.ScriptLineNumber
+                  Column    = $e.InvocationInfo.OffsetInLine
+
+                }
+                
+                # output information. Post-process collected info, and log info (optional)
+                Write-Output -InputObject $info
+
+            }
 
         }
 
@@ -67,7 +134,7 @@ Function Get-MonitorInfo {
     Param (
         [Parameter( ValueFromPipelineByPropertyName=$True,
                     ValueFromPipeline=$True)]
-        [String[]]$ComputerName = 'localhost'
+        [string[]]$ComputerName = 'localhost'
     )
 
     foreach ($computer in $ComputerName) {
@@ -75,26 +142,39 @@ Function Get-MonitorInfo {
         Try {
 
             $WMI = @{
-                'ComputerName' = $Computer;
-                'Class' = 'wmiMonitorID';
-                'NameSpace' = 'root\wmi';
+            
+                'ComputerName' = $Computer
+
+                'Class' = 'wmiMonitorID'
+
+                'NameSpace' = 'root\wmi'
+
                 'ErrorAction' = 'stop'
+                
             }
 
             $Monitors = Get-CimInstance @WMI
 
             $WMI = @{
-                'ComputerName' = $Computer;
-                'Class' = 'Win32_ComputerSystem';
+            
+                'ComputerName' = $Computer
+
+                'Class' = 'Win32_ComputerSystem'
+
                 'ErrorAction' = 'Stop'
+                
             }
 
             $System = Get-CimInstance @WMI
 
             $WMI = @{
-                'ComputerName' = $computer;
-                'Class' = 'Win32_Bios';
+            
+                'ComputerName' = $computer
+
+                'Class' = 'Win32_Bios'
+
                 'ErrorAction' = 'stop'
+                
             }
 
             $Bios = Get-CimInstance @WMI
@@ -102,24 +182,47 @@ Function Get-MonitorInfo {
             foreach ($monitor in $Monitors) {
 
                 $props = [ordered]@{
-                    'ComputerName' = $computer;
-                    'ComputerType' = $System.model;
-                    'ComputerSerial' = $Bios.SerialNumber;
-                    'MonitorType' = ($Monitor.UserFriendlyName | ForEach-Object {[Char]$_}) -Join ""
-                    'MonitorSerial' = ($Monitor.SerialNumberID | ForEach-Object {[Char]$_}) -Join "";
-                    'ConnectionType' = Get-DisplayConnection -InstanceName $Monitor.InstanceName
+                
+                    'ComputerName' = $computer
+
+                    'ComputerType' = $System.model
+
+                    'ComputerSerial' = $Bios.SerialNumber
+
+                    'MonitorType' = ($Monitor.UserFriendlyName | ForEach-Object {[Char]$_}) -Join ''
+
+                    'MonitorSerial' = ($Monitor.SerialNumberID | ForEach-Object {[Char]$_}) -Join ''
+
+                    'ConnectionType' = Get-DisplayConnection -ComputerName $computer -InstanceName $Monitor.InstanceName
+                     
                 }
 
                 $obj = New-Object -TypeName psobject -Property $props
                 $obj.PsObject.Typenames.insert(0,'ComputerMonitorInfo')
-                Write-Output $obj
+                Write-Output -InputObject $obj
 
             }
 
         } Catch {
+            # get error record
+            [Management.Automation.ErrorRecord]$e = $_
 
-            Write-Output "$($Error[0].Exception)"
-
+            # retrieve information about runtime error
+            $info = [PSCustomObject]@{
+            
+              Date = (Get-Date)
+              Exception = $e.Exception.Message
+              Reason    = $e.CategoryInfo.Reason
+              Target    = $e.CategoryInfo.TargetName
+              Script    = $e.InvocationInfo.ScriptName
+              Line      = $e.InvocationInfo.ScriptLineNumber
+              Column    = $e.InvocationInfo.OffsetInLine
+              
+            }
+            
+            # output information. Post-process collected info, and log info (optional)
+            Write-output -inputobject $info
+            
         }
 
     }

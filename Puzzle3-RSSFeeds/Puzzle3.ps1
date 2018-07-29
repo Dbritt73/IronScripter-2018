@@ -53,17 +53,25 @@ Function Get-RSSFeedList {
 
 Function Format-StringWrap {
     <#
+
     .SYNOPSIS
     wraps a string or an array of strings at the console width without breaking within a word
+
     .PARAMETER chunk
     a string or an array of strings
+
     .EXAMPLE
     word-wrap -chunk $string
+
     .EXAMPLE
     $string | word-wrap
 
     .Notes
-    word-wrap borrwoed from: https://stackoverflow.com/questions/1059663/is-there-a-way-to-wordwrap-results-of-a-powershell-cmdlet
+    Used to parse long strings without breaking a word in the middle when writing to console
+
+    .Link
+    https://stackoverflow.com/questions/1059663/is-there-a-way-to-wordwrap-results-of-a-powershell-cmdlet
+
     #>
 
     [CmdletBinding()]
@@ -123,14 +131,17 @@ Function Get-WebArticle {
     )
 
     Add-Type -path "$PSScriptroot\Net45\HtmlAgilityPack.dll"
+
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
     $content = (Invoke-WebRequest -Uri $LinkPost).content
-    
+
     $html = New-Object HtmlAgilityPack.HtmlDocument
-    
+
     $html.LoadHtml($content)
-    
+
     $output = (($html.DocumentNode.Descendants('p').innertext)) | Format-StringWrap
+
     $output.Replace("&#8220;","").replace("&#8221;","").replace("&#8217;","'") | more
 
 
@@ -140,26 +151,37 @@ Function Get-WebArticle {
 Function Get-Feed {
     <#
     .SYNOPSIS
-    Short description
-    
+    Get-Feed reads a RSS feed and prompts console user whioch article they want to read, either in console or the default web browser
+
     .DESCRIPTION
-    Long description
-    
+    Get-Feed utilizes the included Get-RSSFeedList to present the host with an indexed list of the most resent posts in
+    the feed. The user then has the option to select the index number of the post they want to read, if they appened the
+    letter 'C' to the index then the post will be written to the console. If only the number was provided, Get-Feed will
+    launch the default browser and navigate to the posts web address.
+
     .PARAMETER FeedLink
-    Parameter description
-    
+    The link to the RSS feed for the site you want to scrape
+
     .EXAMPLE
-    An example
-    
+    Get-Feed -FeedLink 'https://plaentpowershell.com/feed'
+
     .NOTES
-    General notes
+    *Solution to Puzzle 3 of the Iron Scripter 2018 challenge
+    *Works with PowerShell Core on Windows
+    *First time using the HTMLAgilityPack
+        *For getting parsed html results and be compatible with PowerShell Core.
+
+    .LINK
+    http://html-agility-pack.net/
+
     #>
 
     [CmdletBinding()]
     Param (
+
         [Parameter( ValueFromPipeline = $true,
                     ValueFromPipelineByPropertyName =$true)]
-        [string[]]$FeedLink #= 'https://powershell.org/feed'
+        [string[]]$FeedLink
 
     )
 
@@ -172,32 +194,33 @@ Function Get-Feed {
         $FeedPosts | Format-Table | Out-string | Write-Host
         $Selected = Read-Host -Prompt "What post would you like to read? Add 'C' to view in console"
 
-        if ($Selected -like "*C") {
+        if (($Selected -clike '*C') -or ($Selected -clike '*c') ) {
 
-            $Selected = $Selected.TrimEnd('C')
+            if ($Selected -clike '*C') {
+
+                $Selected = $Selected.TrimEnd('C')
+
+            } elseif ($Selected -clike '*c') {
+
+                $Selected = $Selected.TrimEnd('c')
+
+            }
+
             $SelectedPost = $FeedPosts | Where-Object {$_.index -eq $Selected} 
             $LinkPost = $SelectedPost | Select-Object -ExpandProperty 'link'
-        
+
             $SelectedPost
             Get-WebArticle -LinkPost $LinkPost
-        
-        } elseif ($Selected -like "*c") {
-        
-            $Selected = $Selected.TrimEnd('c')
-            $SelectedPost = $FeedPosts | Where-Object {$_.index -eq $Selected} 
-            $LinkPost = $SelectedPost | Select-Object -ExpandProperty 'link'
-        
-            $SelectedPost
-            Get-WebArticle -LinkPost $LinkPost
-        
+
         } else {
-        
+
             Start-Process ($FeedPosts | Where-Object {$_.index -eq $Selected} | Select-Object -ExpandProperty 'link')
-        
+
         }
-        
+
     }
 
     End {}
 
 }
+
