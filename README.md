@@ -1,7 +1,7 @@
 # IronScripter-2018
 This is a repo for my 'solutions' to the Iron Scripter 2018 prequel puzzle challenges. You can find the puzzle specifications on powershell.org
 
-Puzzle 1 : Get-MonitotInfo
+Puzzle 1 : Get-MonitorInfo
 
 Puzzle 2 : CustomComputerInformation Module with formatting
 
@@ -13,13 +13,13 @@ Puzzle 5 : get performance counters of a system
 
 Puzzle 6 : Get uptime of computer
 
-Puzzle 7 : Write custom PowerShell Class
+Puzzle 7 : Write custom PowerShell Class - Solution heavily inspired by Richard Siddaways proposed solution
 
 Puzzle 8 : Create local users, and give file/folder permissions to a directory
 
-Puzzle 9 :
+Puzzle 9 : File system maintenance
 
-Puzzle 10 :
+Puzzle 10 : Event logs
 
 Iron Scripter Prelude Puzzle 1
 
