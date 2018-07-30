@@ -1,10 +1,10 @@
 Function Get-DisplayConnection {
   <#
     .SYNOPSIS
-    Describe purpose of "Get-DisplayConnection" in 1-2 sentences.
+    Get each monitor instance on a local or remote computer and returns the connection type used by the monitor
 
     .DESCRIPTION
-    Add a more complete description of what the function does.
+    Get-DisplayConnection 
 
     .PARAMETER InstanceName
     Describe parameter -InstanceName.
