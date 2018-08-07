@@ -193,6 +193,8 @@ Function Get-MonitorInfo {
 
                     'MonitorSerial' = ($Monitor.SerialNumberID | ForEach-Object {[Char]$_}) -Join ''
 
+                    'MonitorYear' = $Monitor.YearOfManufacture
+
                     'ConnectionType' = Get-DisplayConnection -ComputerName $computer -InstanceName $Monitor.InstanceName
                      
                 }
