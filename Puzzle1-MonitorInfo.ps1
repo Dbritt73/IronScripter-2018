@@ -134,7 +134,7 @@ Function Get-MonitorInfo {
 
     [CmdletBinding()]
     Param (
-        [Parameter( Posistion = 0,
+        [Parameter( position = 0,
                     ValueFromPipelineByPropertyName = $True,
                     ValueFromPipeline = $True)]
         [string[]]$ComputerName = 'localhost'
