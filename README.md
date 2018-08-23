@@ -13,7 +13,7 @@ Puzzle 5 : get performance counters of a system
 
 Puzzle 6 : Get uptime of computer
 
-Puzzle 7 : Write custom PowerShell Class - Solution heavily inspired by Richard Siddaways proposed solution
+Puzzle 7 : Write custom PowerShell Class - Solution heavily inspired by Richard Siddaway's proposed solution
 
 Puzzle 8 : Create local users, and give file/folder permissions to a directory
 
