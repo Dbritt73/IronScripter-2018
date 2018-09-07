@@ -1,10 +1,10 @@
 Function Get-DisplayConnection {
   <#
     .SYNOPSIS
-    Describe purpose of "Get-DisplayConnection" in 1-2 sentences.
+    Get each monitor instance on a local or remote computer and returns the connection type used by the monitor
 
     .DESCRIPTION
-    Add a more complete description of what the function does.
+    Get-DisplayConnection 
 
     .PARAMETER InstanceName
     Describe parameter -InstanceName.
@@ -56,11 +56,11 @@ Function Get-DisplayConnection {
                     'ErrorAction' = 'Stop'
 
                 }
-        
+
                 $connectionType = get-ciminstance @CIM | Where-object {$_.InstanceName -eq $InstanceName} | Select-Object -ExpandProperty VideoOutputTechnology
-                
+
                 Switch ($ConnectionType) {
-        
+
                     -2 {'Uninitialized'}
                     -1 {'Other'}
                     0 {'VGA'}
@@ -78,7 +78,7 @@ Function Get-DisplayConnection {
                     13 {'Embedded-UDI'}
                     14 {'SDTV'}
                     15 {'MiraCast'}
-        
+
                 }
 
             } Catch {
@@ -88,17 +88,18 @@ Function Get-DisplayConnection {
 
                 # retrieve information about runtime error
                 $info = [PSCustomObject]@{
-                
-                  Date = (Get-Date)
-                  Exception = $e.Exception.Message
-                  Reason    = $e.CategoryInfo.Reason
-                  Target    = $e.CategoryInfo.TargetName
-                  Script    = $e.InvocationInfo.ScriptName
-                  Line      = $e.InvocationInfo.ScriptLineNumber
-                  Column    = $e.InvocationInfo.OffsetInLine
+
+                  Date         = (Get-Date)
+                  ComputerName = $computer
+                  Exception    = $e.Exception.Message
+                  Reason       = $e.CategoryInfo.Reason
+                  Target       = $e.CategoryInfo.TargetName
+                  Script       = $e.InvocationInfo.ScriptName
+                  Line         = $e.InvocationInfo.ScriptLineNumber
+                  Column       = $e.InvocationInfo.OffsetInLine
 
                 }
-                
+
                 # output information. Post-process collected info, and log info (optional)
                 Write-Output -InputObject $info
 
@@ -130,10 +131,12 @@ Function Get-MonitorInfo {
     .NOTES
     Works on PowerShell 3.0 and higher
     #>
+
     [CmdletBinding()]
     Param (
-        [Parameter( ValueFromPipelineByPropertyName=$True,
-                    ValueFromPipeline=$True)]
+        [Parameter( position = 0,
+                    ValueFromPipelineByPropertyName = $True,
+                    ValueFromPipeline = $True)]
         [string[]]$ComputerName = 'localhost'
     )
 
@@ -142,7 +145,7 @@ Function Get-MonitorInfo {
         Try {
 
             $WMI = @{
-            
+
                 'ComputerName' = $Computer
 
                 'Class' = 'wmiMonitorID'
@@ -150,31 +153,31 @@ Function Get-MonitorInfo {
                 'NameSpace' = 'root\wmi'
 
                 'ErrorAction' = 'stop'
-                
+
             }
 
             $Monitors = Get-CimInstance @WMI
 
             $WMI = @{
-            
+
                 'ComputerName' = $Computer
 
                 'Class' = 'Win32_ComputerSystem'
 
                 'ErrorAction' = 'Stop'
-                
+
             }
 
             $System = Get-CimInstance @WMI
 
             $WMI = @{
-            
+
                 'ComputerName' = $computer
 
                 'Class' = 'Win32_Bios'
 
                 'ErrorAction' = 'stop'
-                
+
             }
 
             $Bios = Get-CimInstance @WMI
@@ -182,7 +185,7 @@ Function Get-MonitorInfo {
             foreach ($monitor in $Monitors) {
 
                 $props = [ordered]@{
-                
+
                     'ComputerName' = $computer
 
                     'ComputerType' = $System.model
@@ -193,8 +196,10 @@ Function Get-MonitorInfo {
 
                     'MonitorSerial' = ($Monitor.SerialNumberID | ForEach-Object {[Char]$_}) -Join ''
 
+                    'MonitorYear' = $Monitor.YearOfManufacture
+
                     'ConnectionType' = Get-DisplayConnection -ComputerName $computer -InstanceName $Monitor.InstanceName
-                     
+
                 }
 
                 $obj = New-Object -TypeName psobject -Property $props
@@ -204,25 +209,27 @@ Function Get-MonitorInfo {
             }
 
         } Catch {
+
             # get error record
             [Management.Automation.ErrorRecord]$e = $_
 
             # retrieve information about runtime error
             $info = [PSCustomObject]@{
-            
-              Date = (Get-Date)
-              Exception = $e.Exception.Message
-              Reason    = $e.CategoryInfo.Reason
-              Target    = $e.CategoryInfo.TargetName
-              Script    = $e.InvocationInfo.ScriptName
-              Line      = $e.InvocationInfo.ScriptLineNumber
-              Column    = $e.InvocationInfo.OffsetInLine
-              
+
+              Date         = (Get-Date)
+              ComputerName = $computer
+              Exception    = $e.Exception.Message
+              Reason       = $e.CategoryInfo.Reason
+              Target       = $e.CategoryInfo.TargetName
+              Script       = $e.InvocationInfo.ScriptName
+              Line         = $e.InvocationInfo.ScriptLineNumber
+              Column       = $e.InvocationInfo.OffsetInLine
+
             }
-            
+
             # output information. Post-process collected info, and log info (optional)
             Write-output -inputobject $info
-            
+
         }
 
     }
