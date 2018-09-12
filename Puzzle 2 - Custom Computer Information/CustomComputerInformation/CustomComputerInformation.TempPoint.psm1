@@ -164,7 +164,6 @@ Function Get-ComputerInformation {
             }
         }
     }
-	
-	End { }
-	
+
+    End {}
 }
