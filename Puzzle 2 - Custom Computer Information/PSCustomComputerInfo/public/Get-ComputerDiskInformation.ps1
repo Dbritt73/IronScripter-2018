@@ -60,19 +60,37 @@ Function Get-ComputerDiskInformation {
 
                     }
 
-                    Write-Debug "Test DiskProps"
+                    Write-Debug -Message 'Test DiskProps'
 
                     $DiskObject = New-Object -TypeName PSObject -Property $DiskProps
                     $DiskObject.PSObject.TypeNames.Insert(0,'Custom.DiskInformation')
-                    Write-Output $DiskObject
+                    Write-Output -InputObject $DiskObject
                 }
 
             } Catch {
+            
+                # get error record
+                [Management.Automation.ErrorRecord]$e = $_
 
-                Write-Output "$($Error[0])"
+                # retrieve information about runtime error
+                $info = [PSCustomObject]@{
+                
+                  Exception = $e.Exception.Message
+                  Reason    = $e.CategoryInfo.Reason
+                  Target    = $e.CategoryInfo.TargetName
+                  Script    = $e.InvocationInfo.ScriptName
+                  Line      = $e.InvocationInfo.ScriptLineNumber
+                  Column    = $e.InvocationInfo.OffsetInLine
+                  
+                }
+                
+                # output information. Post-process collected info, and log info (optional)
+                $info
                 
             }
+            
         }
+        
     }
 
     End {}

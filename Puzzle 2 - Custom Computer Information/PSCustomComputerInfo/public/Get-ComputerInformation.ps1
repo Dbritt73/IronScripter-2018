@@ -69,19 +69,37 @@ Function Get-ComputerInformation {
 
                 }
 
-                Write-debug "Test Properties"
+                Write-debug -Message 'Test Properties'
 
                 $Object = New-Object -TypeName PSObject -Property $Properties
                 $Object.PSObject.TypeNames.Insert(0,'Custom.ComputerInformation')
-                Write-Debug 'Test output'
-                Write-Output $Object
+                Write-Debug -Message 'Test output'
+                Write-Output -InputObject $Object
 
             } Catch {
+            
+                # get error record
+                [Management.Automation.ErrorRecord]$e = $_
 
-                Write-Output "$($Error[0])"
-
+                # retrieve information about runtime error
+                $info = [PSCustomObject]@{
+                
+                  Exception = $e.Exception.Message
+                  Reason    = $e.CategoryInfo.Reason
+                  Target    = $e.CategoryInfo.TargetName
+                  Script    = $e.InvocationInfo.ScriptName
+                  Line      = $e.InvocationInfo.ScriptLineNumber
+                  Column    = $e.InvocationInfo.OffsetInLine
+                  
+                }
+                
+                # output information. Post-process collected info, and log info (optional)
+                $info
+                
             }
+            
         }
+        
     }
 	
 	End { }
