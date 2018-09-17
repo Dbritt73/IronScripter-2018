@@ -18,6 +18,7 @@ Function Get-FolderStats {
                 $ObjProps = [Ordered]@{
 
                     'TimeStamp' = (Get-Date);
+                    'Path' = $Path;
                     'Size' = [Math]::Round(($files.Sum / 1MB));
                     'Files' = $files.Count;
                     'Folders' = $folders.Count
