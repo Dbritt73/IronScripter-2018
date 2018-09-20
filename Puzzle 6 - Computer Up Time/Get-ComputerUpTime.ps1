@@ -91,13 +91,15 @@ Function Get-ComputerUpTime {
     
                 # retrieve information about runtime error
                 $info = [PSCustomObject]@{
-                
-                  Exception = $e.Exception.Message
-                  Reason    = $e.CategoryInfo.Reason
-                  Target    = $e.CategoryInfo.TargetName
-                  Script    = $e.InvocationInfo.ScriptName
-                  Line      = $e.InvocationInfo.ScriptLineNumber
-                  Column    = $e.InvocationInfo.OffsetInLine
+                    
+                    ComputerName = $computer
+                    Date         = Get-Date
+                    Exception    = $e.Exception.Message
+                    Reason       = $e.CategoryInfo.Reason
+                    Target       = $e.CategoryInfo.TargetName
+                    Script       = $e.InvocationInfo.ScriptName
+                    Line         = $e.InvocationInfo.ScriptLineNumber
+                    Column       = $e.InvocationInfo.OffsetInLine
                   
                 }
                 
