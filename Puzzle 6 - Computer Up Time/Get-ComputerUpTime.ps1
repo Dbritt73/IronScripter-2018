@@ -31,6 +31,9 @@ Function Get-ComputerUpTime {
     [CmdletBinding()]
     Param (
 
+        [Parameter( ValueFromPipeline = $true,
+                    ValueFromPipelineByPropertyName = $true,
+                    Position = 0)]
         [string[]]$ComputerName
 
     )
@@ -55,25 +58,25 @@ Function Get-ComputerUpTime {
     
                 $OS = Get-CimInstance @WMI
     
-                $Uptime = (Get-Date) - $OS.LastBootUpTime
+                $BootTime = (Get-Date) - $OS.LastBootUpTime
     
-                [int]$days = $Uptime.Days
+                [int]$days = $BootTime.Days
     
-                $hoursPercent = $uptime.Hours / 24
+                $hoursPercent = $BootTime.Hours / 24
                 
                 $hours = '{0:n3}' -f $hoursPercent
     
-                $output = "$Days" + '.' + "$hours"
-                $output = $output.Split('.')
-                $output = "$($output[0])" + '.' + "$($output[2])"
+                $UpTime = "$Days" + '.' + "$hours"
+                $UpTime = $UpTime.Split('.')
+                $UpTime = "$($UpTime[0])" + '.' + "$($UpTime[2])"
     
-                $ObjProps = @{
+                $ObjProps = [ordered]@{
     
                     'ComputerName' = $OS.CSName
     
                     'LastBootTime' = $OS.LastBootUpTime
     
-                    'Uptime' = $output
+                    'Uptime' = $UpTime
     
                 }
     
