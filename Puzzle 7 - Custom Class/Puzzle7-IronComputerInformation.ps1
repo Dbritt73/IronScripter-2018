@@ -133,6 +133,7 @@ Class IronComputerInformation {
         }
 
         $this.GetAllInfo()
+        
     }
 
 }
