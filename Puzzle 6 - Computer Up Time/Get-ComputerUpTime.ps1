@@ -1,3 +1,4 @@
+﻿#!/usr/bin/env powershell
 Function Get-ComputerUpTime {
   <#
     .SYNOPSIS
