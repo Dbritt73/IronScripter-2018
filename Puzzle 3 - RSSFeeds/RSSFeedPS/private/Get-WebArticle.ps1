@@ -53,7 +53,7 @@ Function Get-WebArticle {
         
             $output = (($html.DocumentNode.Descendants('p').innertext)) | Format-StringWrap
         
-            $output.Replace('&#8220;','').replace('&#8221;','').replace('&#8217;',"'") | more
+            $output.Replace('&#8220;','').replace('&#8221;','').replace('&#8217;',"'").replace('&#8212;', '--') | more
 
         } Catch {
         
