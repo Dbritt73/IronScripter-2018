@@ -36,8 +36,6 @@ Class IronComputerInformation {
 
             $this.ComputerName = $ComputerName
             $this.Domain = $Domain
-
-        $Error[0]
         
     }
 
@@ -135,6 +133,7 @@ Class IronComputerInformation {
         }
 
         $this.GetAllInfo()
+        
     }
 
 }

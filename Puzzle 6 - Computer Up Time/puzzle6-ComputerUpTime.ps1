@@ -1,14 +1,19 @@
 Function Get-ComputerUpTime {
     [CmdletBinding()]
     Param (
+
         [String[]]$ComputerName
+
     )
 
     Begin {}
 
     Process {
+
         Foreach ($computer in $Computername) {
+
             Try {
+
                 $WMI = @{
                     'ComputerName' = $computer;
                     'ClassName' = 'Win32_OperatingSystem';
@@ -33,10 +38,13 @@ Function Get-ComputerUpTime {
                 Write-output $output
 
             } Catch {}
+
         }
+
     }
 
     End {}
+
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -44,7 +52,9 @@ Function Get-ComputerUpTime {
 Function Get-ComputerTimeStats {
     [CmdletBinding()]
     Param (
+
         [string[]]$ComputerName
+
     )
 
     Begin {}
@@ -54,28 +64,37 @@ Function Get-ComputerTimeStats {
         foreach ($computer in $computername) {
 
             Try {
+
                 $Wmi = @{
+
                     'Computername' = $computer;
                     'Class' = 'win32_OperatingSystem';
+                    'ErrorAction' = 'Stop'
 
                 }
 
                 $OS = Get-CimInstance @Wmi
 
                 $ObjectProperties = @{
+
                     'ComputerName' = $OS.CSName;
                     'LastBootTime' = $OS.LastBootUpTime;
                     'Uptime' = Get-ComputerUpTime -ComputerName $computer
+                    
                 }
 
                 $Object = New-Object -TypeName PSObject -Property $ObjectProperties
-                $Object.PSObject.TypeNames.Insert(0,'SystemUpTime')
+                $Object.PSObject.TypeNames.Insert(0,'System.UpTime')
                 Write-Output $Object
 
             } Catch {
+
                 $error[0]
+
             }
+
         }
+
     }
 
     End {}
