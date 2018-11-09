@@ -30,7 +30,9 @@ Function Get-FolderStats {
 
     [CmdletBinding()]
     Param (
+
         [String[]]$FolderPath
+
     )
 
     Begin {
@@ -54,11 +56,11 @@ Function Get-FolderStats {
 
                     'Path' = $Path
 
-                    'Size' = [Math]::Round(($files.Sum / 1MB))
+                    'Size(MB)' = [Math]::Round(($files.Sum / 1MB))
 
-                    'Files' = $files.Count
+                    'NumberOfFiles' = $files.Count
 
-                    'Folders' = $folders.Count
+                    'NumberOfFolders' = $folders.Count
 
                 }
 
