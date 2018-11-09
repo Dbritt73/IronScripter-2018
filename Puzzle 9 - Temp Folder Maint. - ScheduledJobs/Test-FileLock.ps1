@@ -88,7 +88,7 @@ Function Test-FileLock {
                     $Object.PSObject.TypeNames.Insert(0,'Report.FileLock')
                     Write-Output -InputObject $Object
 
-                  }
+                }
 
             } Catch {
 
