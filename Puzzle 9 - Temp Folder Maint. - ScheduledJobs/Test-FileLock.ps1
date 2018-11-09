@@ -1,10 +1,42 @@
 Function Test-FileLock {
+  <#
+    .SYNOPSIS
+    Describe purpose of "Test-FileLock" in 1-2 sentences.
+
+    .DESCRIPTION
+    Add a more complete description of what the function does.
+
+    .PARAMETER Path
+    Describe parameter -Path.
+
+    .EXAMPLE
+    Test-FileLock -Path Value
+    Describe what this call does
+
+    .NOTES
+    Place additional notes here.
+
+    .LINK
+    URLs to related sites
+    The first link is opened by Get-Help -Online Test-FileLock
+
+    .INPUTS
+    List of input types that are accepted by this function.
+
+    .OUTPUTS
+    List of output types produced by this function.
+  #>
+
+
     #https://stackoverflow.com/questions/24992681/powershell-check-if-a-file-is-locked
     [CmdletBinding()]
     Param (
         
-    [parameter(Mandatory=$true)]
-    [String[]]$Path
+        [parameter( Mandatory = $true,
+                    HelpMessage = 'Add help message for user',
+                    ValueFromPipeline = $true,
+                    ValueFromPipelineByPropertyName = $true)]
+        [String[]]$Path
 
     )
 
@@ -16,15 +48,14 @@ Function Test-FileLock {
 
             Try {
                 
-                $File = New-Object System.IO.FileInfo $item
+                $File = New-Object -TypeName System.IO.FileInfo -ArgumentList $item
                 
                 if ((Test-Path -Path $Path) -eq $false) {
 
-                    #Write-Output $false
-
                     $Props = @{
 
-                        'Path' = $Item;
+                        'Path' = $Item
+
                         'Locked' = 'NA'
 
                     }
@@ -35,19 +66,21 @@ Function Test-FileLock {
               
                   } Else {
 
-                    $Stream = $File.Open([System.IO.FileMode]::Open, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None)
+                    $Stream = $File.Open([System.IO.FileMode]::Open, 
+                                [System.IO.FileAccess]::ReadWrite, 
+                                    [System.IO.FileShare]::None)
   
                     if ($Stream) {
               
-                      $Stream.Close()
+                        $Stream.Close()
               
                     }
               
-                    #Write-Output $false
                     $Props = @{
 
-                        'Path' = $Item;
-                        'Locked' = 'False'
+                        'Path' = $Item
+
+                        'Locked' = $False
 
                     }
 
@@ -60,7 +93,17 @@ Function Test-FileLock {
             } Catch {
 
                 # file is locked by a process.
-                Write-Output $True
+                $Props = @{
+
+                    'Path' = $Item
+
+                    'Locked' = $True
+
+                }
+
+                $Object = New-Object -TypeName psobject -Property $props
+                $Object.PSObject.TypeNames.Insert(0,'Report.FileLock')
+                Write-Output -InputObject $Object
 
             }
 
