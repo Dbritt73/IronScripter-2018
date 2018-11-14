@@ -21,6 +21,7 @@ Function Invoke-NewLocalUser {
         foreach ($computer in $ComputerName) {
 
             Try {
+
                 $password = $UserPassword | ConvertTo-SecureString -AsPlainText -Force
                 Invoke-Command -ComputerName $computer -ScriptBlock {New-LocalUser -Name $Using:Username -Password $Using:Password} 
 
@@ -36,7 +37,8 @@ Function Invoke-NewLocalUser {
 
     End {}
 }
-########################################################################################################################
+
+
 Function Invoke-NewItem {
     [CmdletBinding()]
     Param (
@@ -66,8 +68,9 @@ Function Invoke-NewItem {
     }
 
     End {}
+
 }
-########################################################################################################################
+
 
 Function Invoke-SetPermissions {
     <#
@@ -145,20 +148,28 @@ Function Invoke-SetPermissions {
 
     Process {
         Foreach ($computer in $computerName) {
+
             try {
+
                 $Acl = (Get-Item $Path).GetAccessControl('Access')
                 $AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($Identity, $AccessRight, $InheritanceFlags, $PropagationFlags, $AccessType)
                 $Acl.SetAccessRule($AccessRule)
                 Set-Acl $Path $Acl
+
             } catch {
+
                 Write-Error -Message "Error: $($_.Exception.Message) - Line Number: $($_.InvocationInfo.ScriptLineNumber)"
+
             }
+
         }
 
     }
+
     End {}
 
 }
+
 
 #Controller
 Invoke-NewLocalUser -UserName 'Bill Bennsson' -UserPassword 'password'
