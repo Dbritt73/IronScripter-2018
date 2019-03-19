@@ -57,9 +57,9 @@ Function Get-DisplayConnection {
 
                 }
 
-                $connectionType = get-ciminstance @CIM | Where-object {$_.InstanceName -eq $InstanceName} | Select-Object -ExpandProperty VideoOutputTechnology
+                $connectionType = get-ciminstance @CIM | Where-object {$_.InstanceName -eq $InstanceName}
 
-                Switch ($ConnectionType) {
+                Switch ($ConnectionType.VideoOutputTechnology) {
 
                     -2 {'Uninitialized'}
                     -1 {'Other'}
