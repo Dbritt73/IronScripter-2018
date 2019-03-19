@@ -4,7 +4,7 @@ Function Get-DisplayConnection {
     Get each monitor instance on a local or remote computer and returns the connection type used by the monitor
 
     .DESCRIPTION
-    Get-DisplayConnection 
+    Get-DisplayConnection
 
     .PARAMETER InstanceName
     Describe parameter -InstanceName.
@@ -37,7 +37,7 @@ Function Get-DisplayConnection {
         [Parameter( Mandatory=$true,
                     HelpMessage='Add help message for user')]
         [string]$ComputerName
-        
+
     )
 
     Begin {}
@@ -50,10 +50,10 @@ Function Get-DisplayConnection {
 
                 $CIM = @{
 
-                    'NameSpace' = 'Root/WMI'
+                    'NameSpace'    = 'Root/WMI'
                     'ComputerName' = $Computer
-                    'ClassName' = 'WmiMonitorConnectionParams'
-                    'ErrorAction' = 'Stop'
+                    'ClassName'    = 'WmiMonitorConnectionParams'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
@@ -89,14 +89,14 @@ Function Get-DisplayConnection {
                 # retrieve information about runtime error
                 $info = [PSCustomObject]@{
 
-                  Date         = (Get-Date)
-                  ComputerName = $computer
-                  Exception    = $e.Exception.Message
-                  Reason       = $e.CategoryInfo.Reason
-                  Target       = $e.CategoryInfo.TargetName
-                  Script       = $e.InvocationInfo.ScriptName
-                  Line         = $e.InvocationInfo.ScriptLineNumber
-                  Column       = $e.InvocationInfo.OffsetInLine
+                    Date         = (Get-Date)
+                    ComputerName = $computer
+                    Exception    = $e.Exception.Message
+                    Reason       = $e.CategoryInfo.Reason
+                    Target       = $e.CategoryInfo.TargetName
+                    Script       = $e.InvocationInfo.ScriptName
+                    Line         = $e.InvocationInfo.ScriptLineNumber
+                    Column       = $e.InvocationInfo.OffsetInLine
 
                 }
 
@@ -147,12 +147,9 @@ Function Get-MonitorInfo {
             $WMI = @{
 
                 'ComputerName' = $Computer
-
-                'Class' = 'wmiMonitorID'
-
-                'NameSpace' = 'root\wmi'
-
-                'ErrorAction' = 'stop'
+                'Class'        = 'wmiMonitorID'
+                'NameSpace'    = 'root\wmi'
+                'ErrorAction'  = 'stop'
 
             }
 
@@ -161,10 +158,8 @@ Function Get-MonitorInfo {
             $WMI = @{
 
                 'ComputerName' = $Computer
-
-                'Class' = 'Win32_ComputerSystem'
-
-                'ErrorAction' = 'Stop'
+                'Class'        = 'Win32_ComputerSystem'
+                'ErrorAction'  = 'Stop'
 
             }
 
@@ -173,10 +168,8 @@ Function Get-MonitorInfo {
             $WMI = @{
 
                 'ComputerName' = $computer
-
-                'Class' = 'Win32_Bios'
-
-                'ErrorAction' = 'stop'
+                'Class'        = 'Win32_Bios'
+                'ErrorAction'  = 'stop'
 
             }
 
@@ -184,21 +177,22 @@ Function Get-MonitorInfo {
 
             foreach ($monitor in $Monitors) {
 
-                $props = [ordered]@{
+                $splat = @{
 
                     'ComputerName' = $computer
+                    'InstanceName' = $Monitor.InstanceName
 
-                    'ComputerType' = $System.model
+                }
 
+                $props = [ordered]@{
+
+                    'ComputerName'   = $computer
+                    'ComputerType'   = $System.model
                     'ComputerSerial' = $Bios.SerialNumber
-
-                    'MonitorType' = ($Monitor.UserFriendlyName | ForEach-Object {[Char]$_}) -Join ''
-
-                    'MonitorSerial' = ($Monitor.SerialNumberID | ForEach-Object {[Char]$_}) -Join ''
-
-                    'MonitorYear' = $Monitor.YearOfManufacture
-
-                    'ConnectionType' = Get-DisplayConnection -ComputerName $computer -InstanceName $Monitor.InstanceName
+                    'MonitorType'    = ($Monitor.UserFriendlyName | ForEach-Object {[Char]$_}) -Join ''
+                    'MonitorSerial'  = ($Monitor.SerialNumberID | ForEach-Object {[Char]$_}) -Join ''
+                    'MonitorYear'    = $Monitor.YearOfManufacture
+                    'ConnectionType' = Get-DisplayConnection @splat
 
                 }
 
@@ -216,14 +210,14 @@ Function Get-MonitorInfo {
             # retrieve information about runtime error
             $info = [PSCustomObject]@{
 
-              Date         = (Get-Date)
-              ComputerName = $computer
-              Exception    = $e.Exception.Message
-              Reason       = $e.CategoryInfo.Reason
-              Target       = $e.CategoryInfo.TargetName
-              Script       = $e.InvocationInfo.ScriptName
-              Line         = $e.InvocationInfo.ScriptLineNumber
-              Column       = $e.InvocationInfo.OffsetInLine
+                Date         = (Get-Date)
+                ComputerName = $computer
+                Exception    = $e.Exception.Message
+                Reason       = $e.CategoryInfo.Reason
+                Target       = $e.CategoryInfo.TargetName
+                Script       = $e.InvocationInfo.ScriptName
+                Line         = $e.InvocationInfo.ScriptLineNumber
+                Column       = $e.InvocationInfo.OffsetInLine
 
             }
 
