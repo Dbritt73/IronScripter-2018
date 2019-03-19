@@ -147,7 +147,7 @@ Function Get-MonitorInfo {
             $WMI = @{
 
                 'ComputerName' = $Computer
-                'Class'        = 'wmiMonitorID'
+                'ClassName'    = 'wmiMonitorID'
                 'NameSpace'    = 'root\wmi'
                 'ErrorAction'  = 'stop'
 
@@ -158,7 +158,7 @@ Function Get-MonitorInfo {
             $WMI = @{
 
                 'ComputerName' = $Computer
-                'Class'        = 'Win32_ComputerSystem'
+                'ClassName'    = 'Win32_ComputerSystem'
                 'ErrorAction'  = 'Stop'
 
             }
@@ -168,7 +168,7 @@ Function Get-MonitorInfo {
             $WMI = @{
 
                 'ComputerName' = $computer
-                'Class'        = 'Win32_Bios'
+                'ClassName'    = 'Win32_Bios'
                 'ErrorAction'  = 'stop'
 
             }
