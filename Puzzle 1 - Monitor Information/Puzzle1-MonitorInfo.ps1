@@ -63,15 +63,15 @@ Function Get-DisplayConnection {
 
                     -2 {'Uninitialized'}
                     -1 {'Other'}
-                    0 {'VGA'}
-                    1 {'S-Video'}
-                    2 {'Composite'}
-                    3 {'Component'}
-                    4 {'DVI'}
-                    5 {'HDMI'}
-                    6 {'LVDS'}
-                    8 {'D-Jpn'}
-                    9 {'SDI'}
+                    0  {'VGA'}
+                    1  {'S-Video'}
+                    2  {'Composite'}
+                    3  {'Component'}
+                    4  {'DVI'}
+                    5  {'HDMI'}
+                    6  {'LVDS'}
+                    8  {'D-Jpn'}
+                    9  {'SDI'}
                     10 {'External-DP'}
                     11 {'Embedded-DP'}
                     12 {'External-UDI'}
