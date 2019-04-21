@@ -15,9 +15,9 @@ Function Get-ComputerUpTime {
             Try {
 
                 $WMI = @{
-                    'ComputerName' = $computer;
-                    'ClassName' = 'Win32_OperatingSystem';
-                    'ErrorAction' = 'Stop'
+                    'ComputerName' = $computer
+                    'ClassName'    = 'Win32_OperatingSystem'
+                    'ErrorAction'  = 'Stop'
                 }
 
                 $OS = Get-CimInstance @WMI
@@ -27,7 +27,7 @@ Function Get-ComputerUpTime {
                 [int]$days = $Uptime.Days
 
                 $hoursPercent = $uptime.Hours / 24
-                
+
                 $hours = "{0:n3}" -f $hoursPercent
 
                 Write-debug 'test'
@@ -58,9 +58,9 @@ Function Get-ComputerTimeStats {
     )
 
     Begin {}
-    
+
     Process {
-        
+
         foreach ($computer in $computername) {
 
             Try {
@@ -77,10 +77,10 @@ Function Get-ComputerTimeStats {
 
                 $ObjectProperties = @{
 
-                    'ComputerName' = $OS.CSName;
-                    'LastBootTime' = $OS.LastBootUpTime;
-                    'Uptime' = Get-ComputerUpTime -ComputerName $computer
-                    
+                    'ComputerName' = $OS.CSName
+                    'LastBootTime' = $OS.LastBootUpTime
+                    'Uptime'       = Get-ComputerUpTime -ComputerName $computer
+
                 }
 
                 $Object = New-Object -TypeName PSObject -Property $ObjectProperties
