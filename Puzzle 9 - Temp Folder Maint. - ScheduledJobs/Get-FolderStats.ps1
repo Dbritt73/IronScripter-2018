@@ -36,9 +36,9 @@ Function Get-FolderStats {
     )
 
     Begin {
-  
+
         $ErrorActionPreference = 'Stop'
-  
+
     }
 
     Process {
@@ -52,14 +52,10 @@ Function Get-FolderStats {
 
                 $ObjProps = [Ordered]@{
 
-                    'TimeStamp' = (Get-Date)
-
-                    'Path' = $Path
-
-                    'Size(MB)' = [Math]::Round(($files.Sum / 1MB))
-
-                    'NumberOfFiles' = $files.Count
-
+                    'TimeStamp'       = (Get-Date)
+                    'Path'            = $Path
+                    'Size(MB)'        = [Math]::Round(($files.Sum / 1MB))
+                    'NumberOfFiles'   = $files.Count
                     'NumberOfFolders' = $folders.Count
 
                 }
@@ -69,25 +65,25 @@ Function Get-FolderStats {
                 Write-output -InputObject $Obj
 
             } Catch {
-            
+
                 # get error record
                 [Management.Automation.ErrorRecord]$e = $_
 
                 # retrieve information about runtime error
                 $info = [PSCustomObject]@{
-                
+
                     Exception = $e.Exception.Message
                     Reason    = $e.CategoryInfo.Reason
                     Target    = $e.CategoryInfo.TargetName
                     Script    = $e.InvocationInfo.ScriptName
                     Line      = $e.InvocationInfo.ScriptLineNumber
                     Column    = $e.InvocationInfo.OffsetInLine
-                    
+
                 }
-                
+
                 # output information. Post-process collected info, and log info (optional)
                 Write-Output -InputObject $info
-                
+
             }
 
         }

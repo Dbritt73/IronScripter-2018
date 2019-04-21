@@ -18,7 +18,7 @@ Function Test-FileLock {
 
     .LINK
     URLs to related sites
-    The first link is opened by Get-Help -Online Test-FileLock
+    https://stackoverflow.com/questions/24992681/powershell-check-if-a-file-is-locked
 
     .INPUTS
     List of input types that are accepted by this function.
@@ -27,11 +27,9 @@ Function Test-FileLock {
     List of output types produced by this function.
   #>
 
-
-    #https://stackoverflow.com/questions/24992681/powershell-check-if-a-file-is-locked
     [CmdletBinding()]
     Param (
-        
+
         [parameter( Mandatory = $true,
                     HelpMessage = 'Add help message for user',
                     ValueFromPipeline = $true,
@@ -47,15 +45,14 @@ Function Test-FileLock {
         foreach ($item in $Path) {
 
             Try {
-                
+
                 $File = New-Object -TypeName System.IO.FileInfo -ArgumentList $item
-                
+
                 if ((Test-Path -Path $Path) -eq $false) {
 
                     $Props = @{
 
-                        'Path' = $Item
-
+                        'Path'   = $Item
                         'Locked' = 'NA'
 
                     }
@@ -63,23 +60,22 @@ Function Test-FileLock {
                     $Object = New-Object -TypeName psobject -Property $props
                     $Object.PSObject.TypeNames.Insert(0,'Report.FileLock')
                     Write-Output -InputObject $Object
-              
+
                   } Else {
 
-                    $Stream = $File.Open([System.IO.FileMode]::Open, 
-                                [System.IO.FileAccess]::ReadWrite, 
+                    $Stream = $File.Open([System.IO.FileMode]::Open,
+                                [System.IO.FileAccess]::ReadWrite,
                                     [System.IO.FileShare]::None)
-  
+
                     if ($Stream) {
-              
+
                         $Stream.Close()
-              
+
                     }
-              
+
                     $Props = @{
 
-                        'Path' = $Item
-
+                        'Path'   = $Item
                         'Locked' = $False
 
                     }
@@ -95,8 +91,7 @@ Function Test-FileLock {
                 # file is locked by a process.
                 $Props = @{
 
-                    'Path' = $Item
-
+                    'Path'   = $Item
                     'Locked' = $True
 
                 }
