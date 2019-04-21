@@ -1,9 +1,11 @@
 Function Get-RSSFeedList {
     [CmdletBinding()]
     Param (
+
         [Parameter( ValueFromPipeline = $true,
                     ValueFromPipelineByPropertyName =$true)]
         [String[]]$URL
+
     )
 
     Begin {
@@ -24,11 +26,11 @@ Function Get-RSSFeedList {
 
                     $postprops = [ordered]@{
 
-                        'Index' =$index;
-                        'Title' = $post.title;
-                        'Date' = [DateTime]$post.pubdate;
-                        'Author' = $post.creator.'#cdata-section';
-                        'Link' = $post.Link
+                        'Index'  =$index
+                        'Title'  = $post.title
+                        'Date'   = [DateTime]$post.pubdate
+                        'Author' = $post.creator.'#cdata-section'
+                        'Link'   = $post.Link
 
                     }
 
@@ -76,10 +78,12 @@ Function Format-StringWrap {
 
     [CmdletBinding()]
     Param(
+
         [parameter( Mandatory=1,
                     ValueFromPipeline=1,
                     ValueFromPipelineByPropertyName=1)]
         [Object[]]$text
+
     )
 
     Begin {}
@@ -130,20 +134,27 @@ Function Get-WebArticle {
 
     )
 
-    Add-Type -path "$PSScriptroot\Net45\HtmlAgilityPack.dll"
+    Begin {}
 
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Process {
 
-    $content = (Invoke-WebRequest -Uri $LinkPost).content
+        Add-Type -path "$PSScriptroot\Net45\HtmlAgilityPack.dll"
 
-    $html = New-Object HtmlAgilityPack.HtmlDocument
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-    $html.LoadHtml($content)
+        $content = (Invoke-WebRequest -Uri $LinkPost).content
 
-    $output = (($html.DocumentNode.Descendants('p').innertext)) | Format-StringWrap
+        $html = New-Object HtmlAgilityPack.HtmlDocument
 
-    $output.Replace("&#8220;","").replace("&#8221;","").replace("&#8217;","'") | more
+        $html.LoadHtml($content)
 
+        $output = (($html.DocumentNode.Descendants('p').innertext)) | Format-StringWrap
+
+        $output.Replace("&#8220;","").replace("&#8221;","").replace("&#8217;","'") | more
+
+    }
+
+    End{}
 
 }
 
