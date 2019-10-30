@@ -33,9 +33,9 @@ Function Get-PerfCounters {
       List of output types produced by this function.
   #>
 
-
     [CmdletBinding()]
     Param (
+
         [Parameter( ValuefromPipeline=$true,
                     ValueFromPipelineByPropertyName=$true)]
         [String[]]$ComputerName,
@@ -43,6 +43,7 @@ Function Get-PerfCounters {
         [switch]$HTML,
 
         [switch]$csv
+
     )
 
     Begin {}
@@ -56,12 +57,9 @@ Function Get-PerfCounters {
                 $CIM = @{
 
                     'ComputerName' = $computer
-
-                    'NameSpace' = 'root/CimV2'
-
-                    'ClassName' = 'Win32_PerfFormattedData_PerfOS_Processor'
-
-                    'ErrorAction' = 'Stop'
+                    'NameSpace'    = 'root/CimV2'
+                    'ClassName'    = 'Win32_PerfFormattedData_PerfOS_Processor'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
@@ -70,12 +68,9 @@ Function Get-PerfCounters {
                 $CIM = @{
 
                     'ComputerName' = $computer
-
-                    'NameSpace' = 'root/CimV2'
-
-                    'ClassName' = 'CIM_LogicalDisk'
-
-                    'ErrorAction' = 'Stop'
+                    'NameSpace'    = 'root/CimV2'
+                    'ClassName'    = 'CIM_LogicalDisk'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
@@ -84,12 +79,9 @@ Function Get-PerfCounters {
                 $CIM = @{
 
                     'ComputerName' = $computer
-
-                    'NameSpace' = 'root/CimV2'
-
-                    'ClassName' = 'Win32_PerfFormattedData_PerfOS_Memory'
-
-                    'ErrorAction' = 'Stop'
+                    'NameSpace'    = 'root/CimV2'
+                    'ClassName'    = 'Win32_PerfFormattedData_PerfOS_Memory'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
@@ -98,30 +90,22 @@ Function Get-PerfCounters {
                 $CIM = @{
 
                     'ComputerName' = $computer
-
-                    'NameSpace' = 'root/CimV2'
-
-                    'ClassName' = 'Win32_PerfFormattedData_Tcpip_NetworkAdapter'
-
-                    'ErrorAction' = 'Stop'
+                    'NameSpace'    = 'root/CimV2'
+                    'ClassName'    = 'Win32_PerfFormattedData_Tcpip_NetworkAdapter'
+                    'ErrorAction'  = 'Stop'
 
                 }
 
                 $Network = Get-CimInstance @CIM | Where-Object {$_.BytesTotalPerSec -ne 0}
 
-                $PerfProps = @{
+                $PerfProps = [Ordered]@{
 
-                    'ComputerName' = $computer
-
-                    'TimeStamp' = (Get-Date)
-
+                    'ComputerName'            = $computer
+                    'TimeStamp'               = (Get-Date)
                     'PercentageProcessorTime' = [int]($Processor | Measure-Object -Property PercentProcessorTime -Average | Select-Object -ExpandProperty Average)
-
-                    'PercentFreeSpace(C:)' = [int](($disk.FreeSpace / $disk.Size) * 100)
-
-                    'MemoryCommitedBytes' = $Memory.PercentCommittedBytesInUse
-
-                    'TotalNetBytesSent' = $Network | Sort-Object -Property BytesTotalPerSec -Descending | Select-Object -Property Name, BytesTotalPerSec -First 2
+                    'PercentFreeSpace(C:)'    = [int](($disk.FreeSpace / $disk.Size) * 100)
+                    'MemoryCommitedBytes'     = $Memory.PercentCommittedBytesInUse
+                    'TotalNetBytesSent'       = $Network | Sort-Object -Property BytesTotalPerSec -Descending | Select-Object -Property Name, BytesTotalPerSec -First 2
 
                 }
 
@@ -198,6 +182,7 @@ Function Invoke-Output {
 
     [cmdletBinding()]
     Param (
+
         [Parameter( ValuefromPipeline=$true,
                     ValueFromPipelineByPropertyName=$true)]
         [String[]]$ComputerName,
@@ -205,6 +190,7 @@ Function Invoke-Output {
         [Switch]$Html,
 
         [Switch]$csv
+
     )
 
     Begin {}
@@ -221,11 +207,11 @@ Function Invoke-Output {
                     $HTMLReport = $ComputerName | Get-PerfCounters | ConvertTo-Html -As 'Table' -Fragment -PreContent '<h2>PC Perf Counters</h2>' | Out-String
 
                     $HTMLParams = @{
-                        'Head' = "<title>PC Performance Counters</title>$Style"
 
-                        'PreContent' = '<h1>PC Performance</h1>'
-
+                        'Head'        = "<title>PC Performance Counters</title>$Style"
+                        'PreContent'  = '<h1>PC Performance</h1>'
                         'PostContent' = "$HTMLReport"
+
                     }
 
                     ConvertTo-Html @HTMLParams | Out-file -FilePath .\PCPerfCounters.html

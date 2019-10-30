@@ -12,7 +12,7 @@ Class IronComputerInformation {
     [string]$TimeZone
     [double]$SizeofCDrive
     [double]$FreeSpace
-    
+
     #Default Constructor
     IronComputerInformation(){}
 
@@ -20,14 +20,14 @@ Class IronComputerInformation {
     IronComputerInformation ([String]$ComputerName, [string]$Domain) {
 
         #try-catch block had broke this
-        if (($ComputerName -eq '') -or ($ComputerName -eq $Null)) {
+        if (($ComputerName -eq '') -or ($Null -eq $ComputerName)) {
 
             #Write-output "ComputerName is empty or null"
             throw [System.InvalidOperationException]::new("ComputerName is empty or Null")
 
-        } 
+        }
 
-        if (($Domain -eq '') -or ($Domain -eq $Null)) {
+        if (($Domain -eq '') -or ($Null -eq $Domain)) {
 
             #Write-Output "Domain is empty or Null"
             throw [System.InvalidOperationException]::new("Domain is empty or Null")
@@ -36,7 +36,7 @@ Class IronComputerInformation {
 
             $this.ComputerName = $ComputerName
             $this.Domain = $Domain
-        
+
     }
 
     [void] GetComputerInfo() {
@@ -50,7 +50,7 @@ Class IronComputerInformation {
         $this.NumberofProcessors = $compsys.NumberofProcessors
 
     }
-    
+
     [void] GetCoresInfo() {
 
         $proc = Get-CimInstance -ClassName 'Win32_Processor'
@@ -106,7 +106,7 @@ Class IronComputerInformation {
     [double] CalcFreeSpacePerc() {
 
         if (($this.SizeofCDrive -eq 0) -or ($this.FreeSpace -eq 0)) {
-            
+
             $this.GetDiskInfo()
 
         }
@@ -120,7 +120,7 @@ Class IronComputerInformation {
     #Contructor to take local computername and get all info
     IronComputerInformation ([string]$ComputerName) {
 
-        if (($ComputerName -eq '') -or ($ComputerName -eq $Null)) {
+        if (($ComputerName -eq '') -or ($Null -eq $ComputerName)) {
 
             throw [System.InvalidOperationException]::new("computername is empty or nulll")
 
@@ -129,11 +129,11 @@ Class IronComputerInformation {
         if ($ComputerName -ne $env:COMPUTERNAME) {
 
             Throw "$ComputerName not equal to local computername"
-            
+
         }
 
         $this.GetAllInfo()
-        
+
     }
 
 }

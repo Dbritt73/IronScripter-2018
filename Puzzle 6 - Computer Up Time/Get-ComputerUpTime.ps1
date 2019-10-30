@@ -58,11 +58,17 @@ Function Get-ComputerUpTime {
                 $OS = Get-CimInstance @WMI
 
                 $BootTime = (Get-Date) - $OS.LastBootUpTime
+<<<<<<< HEAD
 
                 [int]$days = $BootTime.Days
 
                 $hoursPercent = $BootTime.Hours / 24
 
+=======
+                [int]$days = $BootTime.Days
+
+                $hoursPercent = $BootTime.Hours / 24
+>>>>>>> 21862e65e0f0d71d50004b9725a7df2974547911
                 $hours = '{0:n3}' -f $hoursPercent
 
                 $UpTime = "$Days" + '.' + "$hours"
