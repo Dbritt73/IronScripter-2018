@@ -48,51 +48,47 @@ Function Get-ComputerUpTime {
             Try {
 
                 $WMI = @{
-                
+
                     'ComputerName' = $computer
-    
-                    'ClassName' = 'Win32_OperatingSystem'
-    
-                    'ErrorAction' = 'Stop'
-                    
+                    'ClassName'    = 'Win32_OperatingSystem'
+                    'ErrorAction'  = 'Stop'
+
                 }
-    
+
                 $OS = Get-CimInstance @WMI
-    
+
                 $BootTime = (Get-Date) - $OS.LastBootUpTime
-    
+
                 [int]$days = $BootTime.Days
-    
+
                 $hoursPercent = $BootTime.Hours / 24
-                
+
                 $hours = '{0:n3}' -f $hoursPercent
-    
+
                 $UpTime = "$Days" + '.' + "$hours"
                 $UpTime = $UpTime.Split('.')
                 $UpTime = "$($UpTime[0])" + '.' + "$($UpTime[2])"
-    
+
                 $ObjProps = [ordered]@{
-    
+
                     'ComputerName' = $OS.CSName
-    
                     'LastBootTime' = $OS.LastBootUpTime
-    
-                    'Uptime' = $UpTime
-    
+                    'Uptime'       = $UpTime
+
                 }
-    
+
                 $Object = New-Object -TypeName PSObject -Property $ObjProps
                 $Object.PSObject.TypeNames.Insert(0,'System.UpTime')
                 Write-Output -InputObject $Object
-           
+
             } Catch {
-            
+
                 # get error record
                 [Management.Automation.ErrorRecord]$e = $_
-    
+
                 # retrieve information about runtime error
                 $info = [PSCustomObject]@{
-                    
+
                     ComputerName = $computer
                     Date         = Get-Date
                     Exception    = $e.Exception.Message
@@ -101,12 +97,12 @@ Function Get-ComputerUpTime {
                     Script       = $e.InvocationInfo.ScriptName
                     Line         = $e.InvocationInfo.ScriptLineNumber
                     Column       = $e.InvocationInfo.OffsetInLine
-                  
+
                 }
-                
+
                 # output information. Post-process collected info, and log info (optional)
                 $info
-                
+
             }
 
         }
